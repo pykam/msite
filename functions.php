@@ -40,3 +40,62 @@ function theme_register_nav_menu() {
 	register_nav_menu( 'primary', 'Primary Menu' );
     register_nav_menu( 'footer', 'Footer Menu' );
 }
+
+if (function_exists('register_graphql_field'))
+{
+
+    add_action( 'graphql_register_types', function() {
+
+        /**
+        * {
+        *  siteLogo {
+        *        sourceUrl
+        *   }
+        *  }
+         */
+        register_graphql_field( 'RootQuery', 'siteLogo', [
+            'type' => 'MediaItem',
+            'description' => __( 'The logo set in the customizer', 'pykam-msite' ),
+            'resolve' => function() {
+
+                $logo_id = get_theme_mod( 'custom_logo' );
+
+                if ( ! isset( $logo_id ) || ! absint( $logo_id ) ) {
+                    return null;
+                }
+
+                $media_object = get_post( $logo_id );
+                return new \WPGraphQL\Model\Post( $media_object );
+
+            }
+        ]  );
+
+        /**
+        * {
+        *  favicon {
+        *        sourceUrl
+        *   }
+        *  }
+         */
+        register_graphql_field(
+            'RootQuery',
+            'favicon',
+            [
+                'type' => 'MediaItem',
+                'description' => __( 'The icon set in the customizer', 'pykam-msite' ),
+                'resolve' => function() {
+                    $icon_id = get_option( 'site_icon' );
+                    if ( !isset($icon_id) || !absint($icon_id) ) {
+                        return null;
+                    }
+                    $media_object = get_post($icon_id);
+                    return new \WPGraphQL\Model\Post($media_object);
+                }
+            ]
+        );
+
+    } );
+}
+
+
+
