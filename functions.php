@@ -2,6 +2,19 @@
 
 if (!defined('ABSPATH')) exit;
 
+add_action( 'after_setup_theme', function(){
+
+	add_theme_support( 'menus' );
+
+	add_theme_support( 'custom-logo', [
+		// 'height'      => 190,
+		// 'width'       => 190,
+		'flex-width'  => false,
+		'flex-height' => false,
+		'header-text' => '',
+	] );
+});
+
 /**
  * Disable frontend requests
  */
@@ -19,3 +32,11 @@ function disable_wp_frontend() {
 
 }
 add_action('template_redirect', 'disable_wp_frontend');
+
+// Register Navigation Menu
+add_action( 'after_setup_theme', 'theme_register_nav_menu' );
+
+function theme_register_nav_menu() {
+	register_nav_menu( 'primary', 'Primary Menu' );
+    register_nav_menu( 'footer', 'Footer Menu' );
+}
